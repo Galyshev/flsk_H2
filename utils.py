@@ -58,20 +58,18 @@ def convert_time(date: str) -> str:
     '''
     функция проверяет корректность введенной даты, в случае неподдерживаемых API банка разделителей, преобразует в
     корректный формат и возвращает отформатированный вариант.
-    Варианты ввода: д-м-гг, д.м.гг, д/м/гг и без разделителей дмгг или д м гг
+    Варианты ввода: д-м-гг, д.м.гг, д/м/гг, д,м,гг  и без разделителей дмгг или д м гг (+ любое кол-во пробелов между цифрами)
     Любые другие  введенные данные будут считаться неопределенными и вернется сообщение об ошибке
     :param date: введенная дата
     :return: отформатированная дата
     '''
+    # P.S. Реализовал чуть больше проверок,чем в задании, для практики
 
-    var_separator = ['.', '-', '/', ' ']
+    var_separator = ['.', '-', '/', ',']
     err = 'no date format defined'
-
+    date = date.replace(' ', '')
     if len(date) == 10:
         separator = date[2]
-    # дата введена верно (через точку)
-        if separator == '.':
-            return date
 
     # дата введена через поддерживаемый для обработки разделитель
         for sep in var_separator:
@@ -136,15 +134,26 @@ def get_pb_exchange_rate(convert_currency: str,
 
 
 result = get_pb_exchange_rate('USD', 'PB', '01/11/2022')
+print('#1   =====================================')
 print(result)
 time.sleep(10)
-# result = get_pb_exchange_rate('USD', 'PB', '02-11-2022')
-# print(result)
-# time.sleep(10)
-# result = get_pb_exchange_rate('USD', 'PB', '03112022')
-# print(result)
-# time.sleep(10)
+result = get_pb_exchange_rate('USD', 'PB', '02-11-2022')
+print('#2   =====================================')
+print(result)
+time.sleep(10)
+result = get_pb_exchange_rate('USD', 'PB', '03112022')
+print('#3   =====================================')
+print(result)
+time.sleep(10)
+result = get_pb_exchange_rate('USD', 'PB', '04  11  2022  ')
+print('#4  =====================================')
+print(result)
+time.sleep(10)
 result = get_pb_exchange_rate('USD', 'PB', '0311')
+print('#5_ER   =====================================')
+print(result)
+result = get_pb_exchange_rate('USD', 'PB', '01.Y1.2022')
+print('#6_ER   =====================================')
 print(result)
 
 

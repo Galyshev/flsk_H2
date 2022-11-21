@@ -1,3 +1,8 @@
+'''
+Задание:
+Для функції get_pb_exchange_rate створити валідатор на отримане значення дати. Користувач може вводити дату через дефіс
+або злитно (01112022) і функція має працювати коректно. За іншого варіанту видавати повідомлення, що дату ввели не коректно.
+'''
 def convert_time(date: str) -> str:
     '''
     функция проверяет корректность введенной даты, в случае неподдерживаемых API банка разделителей, преобразует в
@@ -7,14 +12,14 @@ def convert_time(date: str) -> str:
     :param date: введенная дата
     :return: отформатированная дата
     '''
+    # P.S. Реализовал чуть больше проверок, для практики
 
-    var_separator = ['.', '-', '/', ' ']
+    var_separator = ['.', '-', '/', ',']
     err = 'no date format defined'
+    date = date.replace(' ', '')
     if len(date) == 10:
         separator = date[2]
-    # дата введена верно (через точку)
-        if separator == '.':
-            return date
+
 
     # дата введена через поддерживаемый для обработки разделитель
         for sep in var_separator:
@@ -29,6 +34,7 @@ def convert_time(date: str) -> str:
         return err
 
     # дата введена верно, но без разделителей
+
     if len(date) == 8:
         day = date[:2]
         month = date[2:4]
@@ -52,7 +58,7 @@ def convert_time(date: str) -> str:
 
 # d = convert_time ('01/11/2018')
 
-# d = convert_time ('01@11/2018')
+d = convert_time ('01,11,2018')
 
 # d = convert_time('011188886')
 
@@ -60,8 +66,8 @@ def convert_time(date: str) -> str:
 
 # d = convert_time('dd dd dddd')
 
-# d = convert_time('0i 11 9999')
+# d = convert_time('01.Y1.2022')
 
-# d = convert_time('0t118888')
+# d = convert_time('01 1     188    88')
 
-# print(d)
+print(d)
