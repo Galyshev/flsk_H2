@@ -97,12 +97,35 @@ def convert_time(date: str) -> str:
         return err
 
 
+def chk_bank(bank: str) -> str:
+    '''
+    Функция принимает на вход абревиатуру банка, проверяет с заданными и возвращает либо буквенный код банка
+    либо ошибку, если были ввведены не корректные символы
+
+    :param bank: буквенное обозначение банка от пользователя
+    :return: код банка либо ошибка, если банк не найден
+    '''
+    # перевод значений в нижний регистр, чтобы любое сочетание правильных абревиатур указывало на корректный банк
+    bank = bank.lower().replace(' ', '')
+    if bank == 'nbu':
+        return 'NBU'
+    elif bank == 'pb' or bank == 'privatbank':
+        return 'PB'
+    else:
+        return 'error'
+
+
 def get_pb_exchange_rate(convert_currency: str,
                          bank: str,
                          rate_date: str) -> str:
+    # проверка корректности ввода даты
     chk_rate_date = convert_time(rate_date)
     if chk_rate_date == 'no date format defined':
         return f'error: {chk_rate_date}'
+    # проверка корректности ввода абревиатуры банка
+    corr_bank = chk_bank(bank)
+    if corr_bank == 'error':
+        return f'error: Не корректно введен банк ({bank})'
     params = {
         'json': '',
         'date': chk_rate_date,
@@ -115,18 +138,18 @@ def get_pb_exchange_rate(convert_currency: str,
         rates = json['exchangeRate']
         for rate in rates:
             if rate['currency'] == convert_currency:
-                if bank == 'NBU':
+                if corr_bank == 'NBU':
                     try:
                         sale_rate = rate['saleRateNB']
                         purchase_rate = rate['purchaseRateNB']
-                        return f'Exchange rate UAH to {convert_currency} for {chk_rate_date} at {bank}: sale={sale_rate}, purchase={purchase_rate}'
+                        return f'Exchange rate UAH to {convert_currency} for {chk_rate_date} at {corr_bank}: sale={sale_rate}, purchase={purchase_rate}'
                     except:
                         return f'There is no exchange rate NBU for {convert_currency}'
-                elif bank == 'PB':
+                elif corr_bank == 'PB':
                     try:
                         sale_rate = rate['saleRate']
                         purchase_rate = rate['purchaseRate']
-                        return f'Exchange rate UAH to {convert_currency} for {chk_rate_date} at {bank}: sale={sale_rate}, purchase={purchase_rate}'
+                        return f'Exchange rate UAH to {convert_currency} for {chk_rate_date} at {corr_bank}: sale={sale_rate}, purchase={purchase_rate}'
                     except:
                         return f'There is no exchange rate PrivatBank for {convert_currency}'
     else:
@@ -137,23 +160,26 @@ result = get_pb_exchange_rate('USD', 'PB', '01/11/2022')
 print('#1   =====================================')
 print(result)
 time.sleep(10)
-result = get_pb_exchange_rate('USD', 'PB', '02-11-2022')
+result = get_pb_exchange_rate('USD', 'NbU', '02-11-2022')
 print('#2   =====================================')
 print(result)
 time.sleep(10)
-result = get_pb_exchange_rate('USD', 'PB', '03112022')
+result = get_pb_exchange_rate('USD', 'Pri vat ban  k', '03112022')
 print('#3   =====================================')
 print(result)
 time.sleep(10)
-result = get_pb_exchange_rate('USD', 'PB', '04  11  2022  ')
+result = get_pb_exchange_rate('USD', 'nbU', '04  11  2022  ')
 print('#4  =====================================')
 print(result)
 time.sleep(10)
 result = get_pb_exchange_rate('USD', 'PB', '0311')
-print('#5_ER   =====================================')
+print('#5_ER_DATE   =====================================')
 print(result)
 result = get_pb_exchange_rate('USD', 'PB', '01.Y1.2022')
-print('#6_ER   =====================================')
+print('#6_ER_DATE   =====================================')
+print(result)
+result = get_pb_exchange_rate('USD', 'trw', '02-11-2022')
+print('#7_ER_BANK   =====================================')
 print(result)
 
 
